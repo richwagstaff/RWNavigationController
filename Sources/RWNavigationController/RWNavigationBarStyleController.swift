@@ -16,10 +16,10 @@ public class RWNavigationBarStyleController {
     }
     
     /// Important: Set UINavigationControllerDelegate and ensure that navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) is called in this class from the delegate function.
-    init(
+    public init(
         source: RWNavigationBarStyleControllerSource?
     ) {
-        
+        self.source = source
     }
     
     /// Whether the navigation bar is currently transparent or not.
