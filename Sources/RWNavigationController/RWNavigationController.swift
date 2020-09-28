@@ -4,27 +4,20 @@ import UIKit
 
 open class RWNavigationController: UINavigationController, UINavigationControllerDelegate {
     
-    /// Whether the navigation bar is currently transparent or not.
-    public var stylesController = RWNavigationBarStyleController(source: nil)
+    /// The navigation bar styles.
+    public var navigationBarStyles = RWNavigationBarStyleController(source: nil)
     
     open override func viewDidLoad() {
         super.viewDidLoad()
         delegate = self
-        stylesController.source = self
+        navigationBarStyles.source = self
     }
     
     
-    /// Sets the bar style.
-    /// - Parameter style: The bar style.
+    /// Sets the navigation bar style.
+    /// - Parameter style: The navigation bar style.
     public func setNavigationBarStyle(_ style: RWNavigationBarStyle) {
-        stylesController.setNavigationBarStyle(style)
-    }
-    
-    
-    /// Sets the bar config.
-    /// - Parameter config: The custom navigation bar configuration.
-    public func setNavigationBarConfig(_ config: RWNavigationBarCustomStyle) {
-        stylesController.setNavigationBarConfig(config)
+        navigationBarStyles.setNavigationBarStyle(style)
     }
     
     
@@ -38,7 +31,7 @@ open class RWNavigationController: UINavigationController, UINavigationControlle
         willShow viewController: UIViewController,
         animated: Bool
     ) {
-        stylesController.navigationController(navigationController, willShow: viewController, animated: animated)
+        navigationBarStyles.navigationController(navigationController, willShow: viewController, animated: animated)
     }
     
 

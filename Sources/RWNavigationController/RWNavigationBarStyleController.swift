@@ -33,37 +33,30 @@ public class RWNavigationBarStyleController {
     /// Sets the bar style.
     /// - Parameter style: The bar style.
     public func setNavigationBarStyle(_ style: RWNavigationBarStyle) {
-        setNavigationBarConfig(style.config())
-    }
-    
-    
-    /// Sets the bar config.
-    /// - Parameter config: The custom navigation bar configuration.
-    public func setNavigationBarConfig(_ config: RWNavigationBarCustomStyle) {
-        updateNavigationBarStyle(config, forwards: true)
+        setNavigationBarStyle(style, forwards: true)
     }
     
     
     /// Handles updating the navigation bar with the style. If the style is already being used, then the bar isn't updated.
     /// - Parameters:
-    ///   - config: The navigation bar configuration.
+    ///   - style: The navigation bar style.
     ///   - forwards: True if the view controller is being pushed, false if the view controller is being been popped. If in doubt, use true as pops are already detected by RWNavigationController.
-    private func updateNavigationBarStyle(_ config: RWNavigationBarCustomStyle, forwards: Bool) {
-        if config.key == continuousBarKey {
+    private func setNavigationBarStyle(_ style: RWNavigationBarStyle, forwards: Bool) {
+        if style.key == continuousBarKey {
             handleContinuousStyle(forwards: forwards)
             return
         }
         
-        guard currentBarStyle != config.key, let navigationController = self.navigationController else { return }
+        guard currentBarStyle != style.key, let navigationController = self.navigationController else { return }
         
-        currentBarStyle = config.key
-        config.configure(navigationController.navigationBar)
+        currentBarStyle = style.key
+        style.configure(navigationController.navigationBar)
     }
     
     
     
     /// Handles the special continuous style.
-    /// - Parameter forwards: If forwards is true, then it navigation controller adopts the current configuration. If false, the last screen that pushed a view controller before this one that has a non continuous configuration is used.
+    /// - Parameter forwards: If forwards is true, then it navigation controller adopts the current style. If false, the last screen that pushed a view controller before this one that has a non continuous style is used.
     private func handleContinuousStyle(forwards: Bool) {
         // If forwards then there is nothing to do - the current style is kept.
         if forwards { return }
@@ -73,8 +66,8 @@ public class RWNavigationBarStyleController {
         for vc in viewControllers.reversed() {
             
             // Loop through view controllers and use the style of the first one that is not continuous.
-            if let config = vc.RWNavBarConfig, config.key != continuousBarKey {
-                updateNavigationBarStyle(config, forwards: true)
+            if let style = vc.RWNavBarStyle, style.key != continuousBarKey {
+                setNavigationBarStyle(style, forwards: true)
                 break
             }
             
@@ -110,8 +103,8 @@ public class RWNavigationBarStyleController {
             forwards = false
         }
         
-        if let config = viewController.RWNavBarConfig {
-            updateNavigationBarStyle(config, forwards: forwards)
+        if let style = viewController.RWNavBarStyle {
+            setNavigationBarStyle(style, forwards: forwards)
         }
         
         
@@ -123,13 +116,10 @@ public class RWNavigationBarStyleController {
 
 fileprivate extension UIViewController {
     
-    /// A quick and convenient way to get the config from the view controller
-    var RWNavBarConfig: RWNavigationBarCustomStyle? {
+    /// A quick and convenient way to get the style from the view controller
+    var RWNavBarStyle: RWNavigationBarStyle? {
         if let screen = self as? RWNavigationControllerScreen {
-            return screen.navigationBarStyle.config()
-        }
-        else if let screen = self as? RWCustomNavigationControllerScreen {
-            return screen.customNavigationBarConfig
+            return screen.navigationBarStyle
         }
         else {
             return nil
